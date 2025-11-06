@@ -15,12 +15,6 @@ const router = (app) => {
     controllers.Account.login,
   );
 
-  app.get(
-    '/signup',
-    mid.requiresSecure,
-    mid.requiresLogout,
-    controllers.Account.signupPage,
-  );
   app.post(
     '/signup',
     mid.requiresSecure,
