@@ -78,6 +78,36 @@ const DomoList = (props) => {
   );
 };
 
+const DomoStatistics = (props) => {
+  const [averageLevel, setAverageLevel] = useState(0);
+  const [averageAge, setAverageAge] = useState(0);
+
+  useEffect(() => {
+    // Got from out DomoList Component
+    const loadDomosFromServer = async () => {
+      const response = await fetch('/getDomos');
+      const data = await response.json();
+      const domoData = data.domos;
+
+      // Reduce on both level and age to get sums
+      const sumLevel = domoData.reduce((acc, domo) => acc + domo.level, 0);
+      const sumAge = domoData.reduce((acc, domo) => acc + domo.age, 0);
+
+      // Set States for Averages
+      setAverageLevel(Math.round(sumLevel / domoData.length));
+      setAverageAge(Math.round(sumAge / domoData.length));
+    };
+    loadDomosFromServer();
+  }, [props.reloadDomos]);
+
+  return (
+    <>
+      <h3>Average Age: {averageAge}</h3>
+      <h3>Average Level: {averageLevel}</h3>
+    </>
+  );
+}
+
 const App = () => {
   const [reloadDomos, setReloadDomos] = useState(false);
 
@@ -86,6 +116,7 @@ const App = () => {
       <div id='makeDomo'>
         <DomoForm triggerReload={() => setReloadDomos(!reloadDomos)} />
       </div>
+      <DomoStatistics reloadDomos={reloadDomos} />
       <div id='domos'>
         <DomoList domos={[]} reloadDomos={reloadDomos} />
       </div>
